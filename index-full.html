@@ -1,0 +1,2255 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>期末极限满绩 ✨</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
+  <style>
+    :root {
+      --primary: #E8B4CB;
+      --primary-light: #F5D5E5;
+      --secondary: #C9B8E8;
+      --secondary-light: #E0D8F5;
+      --accent: #98D4C4;
+      --accent-light: #C8E8DE;
+      --background: #FAF8FC;
+      --background-gradient: linear-gradient(135deg, #FAF0FC 0%, #F5EEFA 40%, #F0F7F5 100%);
+      --text-primary: #4A4A5A;
+      --text-secondary: #9A9AAA;
+      --text-accent: #7A6A9A;
+      --success: #98D4C4;
+      --warning: #F5D5A8;
+      --error: #E8A5A5;
+      --glass-bg: rgba(255, 255, 255, 0.65);
+      --glass-border: rgba(255, 255, 255, 0.4);
+      --shadow-soft: 0 8px 32px rgba(200, 160, 200, 0.12);
+      --shadow-medium: 0 12px 40px rgba(200, 160, 200, 0.18);
+      --radius-lg: 28px;
+      --radius-md: 18px;
+      --radius-sm: 12px;
+    }
+    
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body {
+      font-family: 'Noto Sans SC', 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--background);
+      color: var(--text-primary);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+    
+    /* Background Effects */
+    .bg-effects {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      pointer-events: none;
+      z-index: -1;
+      overflow: hidden;
+    }
+    
+    .bg-gradient {
+      position: absolute;
+      inset: 0;
+      background: var(--background-gradient);
+    }
+    
+    .floating-shape {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(60px);
+      opacity: 0.5;
+      animation: float 20s ease-in-out infinite;
+    }
+    
+    .shape-1 {
+      width: 400px;
+      height: 400px;
+      background: linear-gradient(135deg, var(--primary-light), var(--secondary-light));
+      top: -100px;
+      right: -100px;
+      animation-delay: 0s;
+    }
+    
+    .shape-2 {
+      width: 300px;
+      height: 300px;
+      background: linear-gradient(135deg, var(--secondary-light), var(--accent-light));
+      bottom: -50px;
+      left: -50px;
+      animation-delay: -5s;
+    }
+    
+    .shape-3 {
+      width: 200px;
+      height: 200px;
+      background: linear-gradient(135deg, var(--accent-light), var(--primary-light));
+      top: 50%;
+      left: 50%;
+      animation-delay: -10s;
+    }
+    
+    @keyframes float {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      25% { transform: translate(20px, -20px) scale(1.05); }
+      50% { transform: translate(-10px, 10px) scale(0.95); }
+      75% { transform: translate(15px, 15px) scale(1.02); }
+    }
+    
+    /* Container */
+    .container {
+      max-width: 480px;
+      margin: 0 auto;
+      padding: 20px;
+      padding-bottom: 100px;
+    }
+    
+    /* Page */
+    .page { display: none; animation: fadeIn 0.3s ease-out; }
+    .page.active { display: block; }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    /* Glass Card */
+    .glass-card {
+      background: var(--glass-bg);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-soft);
+      padding: 24px;
+      margin: 16px 0;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    
+    .glass-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-medium);
+    }
+    
+    /* Header */
+    .header {
+      text-align: center;
+      padding: 32px 0 24px;
+    }
+    
+    .header-icon {
+      font-size: 64px;
+      margin-bottom: 16px;
+      display: inline-block;
+      animation: bounce 2s ease-in-out infinite;
+    }
+    
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
+    
+    .header-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 32px;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 8px;
+    }
+    
+    .header-subtitle {
+      font-size: 15px;
+      color: var(--text-secondary);
+      font-weight: 400;
+    }
+    
+    /* Stats */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin: 20px 0;
+    }
+    
+    .stat-item {
+      text-align: center;
+      padding: 16px 8px;
+      background: linear-gradient(135deg, rgba(232, 180, 203, 0.2), rgba(201, 184, 232, 0.2));
+      border-radius: var(--radius-md);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+    
+    .stat-value {
+      font-family: 'Outfit', sans-serif;
+      font-size: 32px;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    
+    .stat-label {
+      font-size: 12px;
+      color: var(--text-secondary);
+      margin-top: 4px;
+    }
+    
+    /* Quick Actions */
+    .quick-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    
+    .action-item {
+      display: flex;
+      align-items: center;
+      padding: 18px 20px;
+      background: var(--glass-bg);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    
+    .action-item:hover {
+      transform: translateX(4px);
+      background: rgba(255, 255, 255, 0.8);
+    }
+    
+    .action-item:active {
+      transform: scale(0.98);
+    }
+    
+    .action-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      margin-right: 16px;
+      flex-shrink: 0;
+    }
+    
+    .action-icon.pink { background: linear-gradient(135deg, var(--primary-light), var(--primary)); }
+    .action-icon.purple { background: linear-gradient(135deg, var(--secondary-light), var(--secondary)); }
+    .action-icon.green { background: linear-gradient(135deg, var(--accent-light), var(--accent)); }
+    
+    .action-content { flex: 1; }
+    .action-title { font-size: 16px; font-weight: 600; color: var(--text-primary); margin-bottom: 2px; }
+    .action-desc { font-size: 13px; color: var(--text-secondary); }
+    .action-arrow { color: var(--text-secondary); font-size: 20px; margin-left: 12px; }
+    
+    /* Tips Card */
+    .tips-card {
+      background: linear-gradient(135deg, rgba(255, 251, 235, 0.9), rgba(254, 243, 199, 0.9));
+      border: 1px solid rgba(253, 230, 138, 0.5);
+      border-radius: var(--radius-lg);
+      padding: 20px;
+      margin: 16px 0;
+    }
+    
+    .tips-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+    
+    .tips-icon { font-size: 24px; }
+    .tips-title { font-size: 15px; font-weight: 600; color: #92400e; }
+    .tips-text { font-size: 14px; color: #a16207; line-height: 1.6; }
+    
+    /* Section Title */
+    .section-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    /* Form Elements */
+    .form-group { margin-bottom: 20px; }
+    
+    .form-label {
+      display: block;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-primary);
+      margin-bottom: 10px;
+    }
+    
+    .form-input {
+      width: 100%;
+      padding: 16px;
+      border: 2px solid rgba(200, 184, 232, 0.3);
+      border-radius: var(--radius-md);
+      font-size: 16px;
+      font-family: inherit;
+      background: rgba(255, 255, 255, 0.8);
+      color: var(--text-primary);
+      transition: all 0.2s ease;
+    }
+    
+    .form-input:focus {
+      outline: none;
+      border-color: var(--primary);
+      background: white;
+      box-shadow: 0 0 0 4px rgba(232, 180, 203, 0.2);
+    }
+    
+    .form-input::placeholder { color: var(--text-secondary); }
+    
+    /* Date Picker */
+    .date-picker-wrapper {
+      position: relative;
+    }
+    
+    .date-display {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px;
+      background: rgba(255, 255, 255, 0.9);
+      border: 2px solid rgba(200, 184, 232, 0.3);
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      width: 100%;
+      font-family: inherit;
+      font-size: 16px;
+      color: var(--text-primary);
+    }
+    
+    .date-display:hover {
+      border-color: var(--primary);
+    }
+    
+    .date-text { font-size: 16px; color: var(--text-primary); }
+    .date-icon { font-size: 18px; color: var(--primary); }
+    
+    .today-btn {
+      display: inline-block;
+      padding: 8px 16px;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: white;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: transform 0.2s ease;
+    }
+    
+    .today-btn:hover { transform: scale(1.05); }
+    
+    /* File Upload */
+    .upload-zone {
+      border: 2px dashed rgba(200, 184, 232, 0.5);
+      border-radius: var(--radius-lg);
+      padding: 32px 20px;
+      text-align: center;
+      background: rgba(255, 255, 255, 0.5);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      margin-bottom: 20px;
+    }
+    
+    .upload-zone:hover, .upload-zone.dragover {
+      border-color: var(--primary);
+      background: rgba(232, 180, 203, 0.1);
+    }
+    
+    .upload-icon { font-size: 48px; margin-bottom: 12px; }
+    .upload-title { font-size: 16px; font-weight: 600; color: var(--text-primary); margin-bottom: 4px; }
+    .upload-desc { font-size: 13px; color: var(--text-secondary); }
+    .upload-formats { font-size: 12px; color: var(--text-secondary); margin-top: 8px; }
+    
+    /* Exam List */
+    .exam-list { max-height: 350px; overflow-y: auto; }
+    
+    .exam-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px;
+      background: rgba(255, 255, 255, 0.7);
+      border-radius: var(--radius-md);
+      margin-bottom: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.5);
+      transition: all 0.2s ease;
+    }
+    
+    .exam-item:hover {
+      background: rgba(255, 255, 255, 0.9);
+      transform: translateX(4px);
+    }
+    
+    .exam-info { flex: 1; }
+    .exam-name { font-size: 16px; font-weight: 600; color: var(--text-primary); margin-bottom: 4px; }
+    .exam-detail { font-size: 13px; color: var(--text-secondary); }
+    .exam-delete {
+      padding: 8px 14px;
+      background: rgba(232, 165, 165, 0.2);
+      color: #d45454;
+      border-radius: 16px;
+      font-size: 13px;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s ease;
+    }
+    .exam-delete:hover { background: rgba(232, 165, 165, 0.3); }
+    
+    /* Empty State */
+    .empty-state {
+      text-align: center;
+      padding: 48px 20px;
+    }
+    .empty-icon { font-size: 64px; margin-bottom: 16px; opacity: 0.8; }
+    .empty-title { font-size: 18px; font-weight: 600; color: var(--text-primary); margin-bottom: 8px; }
+    .empty-desc { font-size: 14px; color: var(--text-secondary); }
+    
+    /* Button */
+    .btn {
+      display: block;
+      width: 100%;
+      padding: 16px;
+      border: none;
+      border-radius: var(--radius-md);
+      font-size: 16px;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: white;
+      box-shadow: 0 4px 16px rgba(232, 180, 203, 0.4);
+    }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(232, 180, 203, 0.5); }
+    .btn-primary:active { transform: translateY(0); }
+    
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.9);
+      color: var(--primary);
+      border: 2px solid var(--primary);
+    }
+    .btn-secondary:hover { background: rgba(232, 180, 203, 0.1); }
+    
+    .btn-small {
+      padding: 10px 20px;
+      width: auto;
+      border-radius: 20px;
+      font-size: 14px;
+    }
+    
+    /* Course Config */
+    .overview-card {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      border: none;
+      color: white;
+      margin-bottom: 20px;
+    }
+    
+    .overview-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .overview-item { text-align: center; }
+    .overview-value { font-family: 'Outfit', sans-serif; font-size: 28px; font-weight: 700; }
+    .overview-label { font-size: 13px; opacity: 0.9; }
+    
+    /* Course List */
+    .course-item {
+      background: rgba(255, 255, 255, 0.8);
+      border-radius: var(--radius-md);
+      padding: 18px;
+      margin-bottom: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.5);
+    }
+    
+    .course-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 12px;
+    }
+    
+    .course-name { font-size: 16px; font-weight: 600; color: var(--text-primary); }
+    
+    .course-tags { display: flex; gap: 6px; flex-wrap: wrap; }
+    .tag {
+      padding: 5px 10px;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: 500;
+    }
+    .tag-easy { background: rgba(152, 212, 196, 0.3); color: #2d8a6e; }
+    .tag-medium { background: rgba(245, 213, 168, 0.4); color: #b8860b; }
+    .tag-hard { background: rgba(232, 165, 165, 0.3); color: #c75050; }
+    .tag-memorize { background: rgba(232, 180, 203, 0.4); color: #a8507a; }
+    .tag-practice { background: rgba(201, 184, 232, 0.4); color: #7a5ca8; }
+    
+    .course-meta {
+      display: flex;
+      justify-content: space-between;
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin-bottom: 10px;
+    }
+    
+    .course-actions { display: flex; gap: 10px; }
+    .course-action {
+      font-size: 13px;
+      color: var(--primary);
+      cursor: pointer;
+      padding: 4px 10px;
+      border-radius: 12px;
+      background: rgba(232, 180, 203, 0.2);
+      transition: all 0.2s ease;
+    }
+    .course-action:hover { background: rgba(232, 180, 203, 0.3); }
+    
+    /* Options */
+    .options { display: flex; gap: 10px; }
+    .option-btn {
+      flex: 1;
+      padding: 14px 10px;
+      text-align: center;
+      border-radius: var(--radius-sm);
+      font-size: 14px;
+      font-weight: 500;
+      border: 2px solid rgba(200, 184, 232, 0.3);
+      background: rgba(255, 255, 255, 0.8);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .option-btn:hover { border-color: var(--primary); }
+    .option-btn.active {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: white;
+      border-color: transparent;
+    }
+    
+    /* Credits Picker */
+    .credits-picker {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 24px;
+      padding: 8px 0;
+    }
+    .credits-btn {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--primary-light), var(--secondary-light));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      color: var(--primary);
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s ease;
+    }
+    .credits-btn:hover { transform: scale(1.1); }
+    .credits-btn:active { transform: scale(0.95); }
+    .credits-value {
+      font-family: 'Outfit', sans-serif;
+      font-size: 40px;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    
+    /* Progress */
+    .progress-section {
+      background: var(--glass-bg);
+      backdrop-filter: blur(16px);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-lg);
+      padding: 20px;
+      margin: 16px 0;
+    }
+    .progress-header {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+    .progress-label { font-size: 15px; color: var(--text-primary); }
+    .progress-percent { font-size: 15px; font-weight: 600; color: var(--primary); }
+    .progress-bar {
+      height: 8px;
+      background: rgba(200, 184, 232, 0.2);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--primary), var(--secondary), var(--accent));
+      border-radius: 4px;
+      transition: width 0.3s ease;
+    }
+    .progress-info { font-size: 13px; color: var(--text-secondary); margin-top: 8px; }
+    
+    /* Date Nav */
+    .date-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+    .nav-btn {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: var(--glass-bg);
+      backdrop-filter: blur(10px);
+      border: 1px solid var(--glass-border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      color: var(--primary);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .nav-btn:hover { transform: scale(1.1); }
+    .nav-btn:active { transform: scale(0.95); }
+    .date-info { text-align: center; }
+    .current-date { font-size: 18px; font-weight: 600; color: var(--text-primary); }
+    .current-weekday { font-size: 13px; color: var(--text-secondary); }
+    
+    /* Timeline */
+    .timeline { position: relative; }
+    .timeline-item { display: flex; margin-bottom: 16px; }
+    .timeline-line { display: flex; flex-direction: column; align-items: center; width: 20px; }
+    .timeline-dot {
+      width: 12px;
+      height: 12px;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      border-radius: 50%;
+      margin-top: 4px;
+      box-shadow: 0 2px 8px rgba(232, 180, 203, 0.4);
+    }
+    .timeline-connector { flex: 1; width: 2px; background: linear-gradient(to bottom, var(--primary), var(--secondary)); margin-top: 8px; opacity: 0.3; }
+    .timeline-content { flex: 1; margin-left: 12px; }
+    .task-time {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 8px;
+    }
+    .task-time-start { font-size: 15px; font-weight: 600; color: var(--primary); }
+    .task-time-sep { color: var(--text-secondary); }
+    .task-time-end { font-size: 14px; color: var(--text-secondary); }
+    .task-card {
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      border: 1px solid rgba(255, 255, 255, 0.5);
+    }
+    .task-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+    .task-course { font-size: 15px; font-weight: 600; color: var(--text-primary); }
+    .task-tag {
+      padding: 4px 10px;
+      background: rgba(152, 212, 196, 0.2);
+      color: #2d8a6e;
+      border-radius: 10px;
+      font-size: 12px;
+    }
+    .task-content { font-size: 14px; color: var(--text-secondary); line-height: 1.5; }
+    .task-footer { display: flex; justify-content: flex-end; align-items: center; margin-top: 12px; gap: 10px; }
+    .check-circle {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      border: 2px solid rgba(200, 184, 232, 0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .check-circle:hover { border-color: var(--primary); }
+    .check-circle.checked {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      border-color: transparent;
+    }
+    .check-icon { color: white; font-size: 14px; }
+    .task-status { font-size: 13px; color: var(--text-secondary); }
+    .task-status.completed { color: var(--success); }
+    
+    /* Summary */
+    .summary-grid {
+      display: flex;
+      justify-content: space-around;
+      padding: 8px 0;
+    }
+    .summary-item { text-align: center; }
+    .summary-value {
+      font-family: 'Outfit', sans-serif;
+      font-size: 28px;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .summary-label { font-size: 13px; color: var(--text-secondary); margin-top: 4px; }
+    
+    /* Export Button */
+    .export-btn {
+      display: inline-block;
+      padding: 10px 16px;
+      background: rgba(232, 180, 203, 0.2);
+      color: var(--primary);
+      border-radius: 20px;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .export-btn:hover { background: rgba(232, 180, 203, 0.3); }
+    
+    /* Tabs */
+    .tabs {
+      display: flex;
+      background: var(--glass-bg);
+      backdrop-filter: blur(16px);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-md);
+      padding: 4px;
+      margin-bottom: 20px;
+    }
+    .tab-item {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 12px 8px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .tab-item:hover { background: rgba(255, 255, 255, 0.5); }
+    .tab-item.active {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+    }
+    .tab-item.active .tab-text { color: white; }
+    .tab-icon { font-size: 22px; margin-bottom: 4px; }
+    .tab-text { font-size: 12px; color: var(--text-secondary); }
+    
+    /* Advice */
+    .advice-card {
+      display: flex;
+      background: var(--glass-bg);
+      backdrop-filter: blur(16px);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      margin-bottom: 12px;
+      transition: transform 0.2s ease;
+    }
+    .advice-card:hover { transform: translateY(-2px); }
+    .advice-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      margin-right: 14px;
+      flex-shrink: 0;
+    }
+    .advice-icon.sleep { background: linear-gradient(135deg, rgba(232, 180, 203, 0.3), rgba(201, 184, 232, 0.3)); }
+    .advice-icon.diet { background: linear-gradient(135deg, rgba(152, 212, 196, 0.3), rgba(152, 212, 196, 0.2)); }
+    .advice-icon.exercise { background: linear-gradient(135deg, rgba(245, 213, 168, 0.4), rgba(245, 213, 168, 0.3)); }
+    .advice-icon.mindset { background: linear-gradient(135deg, rgba(201, 184, 232, 0.4), rgba(232, 180, 203, 0.3)); }
+    .advice-title { font-size: 15px; font-weight: 600; color: var(--text-primary); margin-bottom: 4px; }
+    .advice-desc { font-size: 13px; color: var(--text-secondary); line-height: 1.5; }
+    
+    /* Motivation */
+    .motivation-card {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      border-radius: var(--radius-lg);
+      padding: 28px 24px;
+      text-align: center;
+      margin-top: 24px;
+    }
+    .motivation-quote {
+      font-size: 18px;
+      color: white;
+      font-weight: 500;
+      line-height: 1.6;
+      margin-bottom: 12px;
+    }
+    .motivation-author { font-size: 14px; color: rgba(255, 255, 255, 0.85); }
+    
+    /* Bottom Nav */
+    .bottom-nav {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(255, 255, 255, 0.7);
+      backdrop-filter: blur(30px);
+      -webkit-backdrop-filter: blur(30px);
+      border-top: 1px solid rgba(255, 255, 255, 0.5);
+      display: flex;
+      padding: 12px 40px;
+      padding-bottom: max(12px, env(safe-area-inset-bottom));
+      max-width: 480px;
+      margin: 0 auto;
+      z-index: 100;
+    }
+    .nav-item {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .nav-item:hover { transform: scale(1.05); }
+    .nav-icon { font-size: 24px; }
+    .nav-text { font-size: 11px; color: var(--text-secondary); }
+    .nav-item.active .nav-text { color: var(--primary); }
+    
+    /* Modal */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(100, 80, 120, 0.3);
+      backdrop-filter: blur(8px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 20px;
+    }
+    .modal-content {
+      width: 100%;
+      max-width: 400px;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(20px);
+      border-radius: var(--radius-lg);
+      padding: 28px;
+      box-shadow: var(--shadow-medium);
+    }
+    .modal-title {
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--text-primary);
+      text-align: center;
+      margin-bottom: 24px;
+    }
+    .modal-actions { display: flex; gap: 12px; margin-top: 24px; }
+    .modal-actions .btn { flex: 1; }
+    
+    /* Preview */
+    .preview-card { margin-top: 20px; }
+    .preview-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+    .preview-date { font-size: 13px; color: var(--text-secondary); }
+    .preview-task {
+      display: flex;
+      padding: 12px 0;
+      border-bottom: 1px dashed rgba(200, 184, 232, 0.3);
+    }
+    .preview-task:last-child { border-bottom: none; }
+    .preview-time { min-width: 80px; font-size: 13px; color: var(--primary); font-weight: 500; }
+    .preview-info { flex: 1; }
+    .preview-course { font-size: 14px; font-weight: 600; color: var(--text-primary); margin-bottom: 2px; }
+    .preview-content { font-size: 12px; color: var(--text-secondary); }
+    .preview-more { text-align: center; font-size: 13px; color: var(--primary); padding: 8px 0; }
+    
+    /* Button Group */
+    .btn-group { display: flex; gap: 12px; }
+    .btn-group .btn { flex: 1; }
+  </style>
+</head>
+<body>
+  <div class="bg-effects">
+    <div class="bg-gradient"></div>
+    <div class="floating-shape shape-1"></div>
+    <div class="floating-shape shape-2"></div>
+    <div class="floating-shape shape-3"></div>
+  </div>
+  
+  <div class="container">
+    <!-- Home Page -->
+    <div id="page-home" class="page active">
+      <div class="header">
+        <div class="header-icon">✨</div>
+        <h1 class="header-title">期末极限满绩</h1>
+        <p class="header-subtitle">科学规划，高效备考 ✊</p>
+      </div>
+      
+      <div class="glass-card">
+        <div class="stats-grid">
+          <div class="stat-item">
+            <div class="stat-value" id="stat-days">0</div>
+            <div class="stat-label">复习天数</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value" id="stat-courses">0</div>
+            <div class="stat-label">考试科目</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value" id="stat-credits">0</div>
+            <div class="stat-label">总学分</div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="glass-card">
+        <h3 class="section-title">⚡ 快速入口</h3>
+        <div class="quick-actions">
+          <div class="action-item" onclick="navigateTo('page-exam')">
+            <div class="action-icon pink">📅</div>
+            <div class="action-content">
+              <div class="action-title">导入考试时间</div>
+              <div class="action-desc">添加考试科目和时间安排</div>
+            </div>
+            <span class="action-arrow">→</span>
+          </div>
+          <div class="action-item" onclick="navigateTo('page-course')">
+            <div class="action-icon purple">⚙️</div>
+            <div class="action-content">
+              <div class="action-title">科目配置</div>
+              <div class="action-desc">设置学分、难度和学习类型</div>
+            </div>
+            <span class="action-arrow">→</span>
+          </div>
+          <div class="action-item" onclick="generateSchedule()">
+            <div class="action-icon green">📋</div>
+            <div class="action-content">
+              <div class="action-title">生成计划</div>
+              <div class="action-desc">智能生成每日复习计划</div>
+            </div>
+            <span class="action-arrow">→</span>
+          </div>
+        </div>
+      </div>
+      
+      <div class="tips-card">
+        <div class="tips-header">
+          <span class="tips-icon">💡</span>
+          <span class="tips-title">今日小贴士</span>
+        </div>
+        <p class="tips-text" id="today-tip">合理安排复习时间，保持高效学习状态！</p>
+      </div>
+      
+      <div id="preview-card" class="glass-card preview-card" style="display: none;">
+        <div class="preview-header">
+          <h3 class="section-title" style="margin-bottom: 0;">📋 今日计划预览</h3>
+          <span class="preview-date" id="preview-date"></span>
+        </div>
+        <div id="preview-tasks"></div>
+      </div>
+    </div>
+    
+    <!-- Exam Import Page -->
+    <div id="page-exam" class="page">
+      <div class="glass-card">
+        <h3 class="section-title">📅 设置当前日期</h3>
+        <div class="date-picker-wrapper">
+          <input type="date" id="current-date" class="form-input" style="display: none;">
+          <button class="date-display" onclick="openDatePicker()">
+            <span class="date-text" id="current-date-display">请选择日期</span>
+            <span class="date-icon">📆</span>
+          </button>
+          <div style="margin-top: 12px; text-align: center;">
+            <span class="today-btn" onclick="setToday()">📍 设为今天</span>
+          </div>
+        </div>
+      </div>
+      
+      <div class="glass-card">
+        <h3 class="section-title">📤 导入文件（可选）</h3>
+        <div class="upload-zone" id="upload-zone">
+          <div class="upload-icon">📁</div>
+          <div class="upload-title">拖拽文件到此处</div>
+          <div class="upload-desc">或点击选择文件</div>
+          <div class="upload-formats">支持 .xlsx .xls .csv 格式</div>
+        </div>
+        <input type="file" id="file-input" accept=".xlsx,.xls,.csv" style="display: none;">
+      </div>
+      
+      <div class="glass-card">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+          <h3 class="section-title" style="margin-bottom: 0;">📝 考试科目</h3>
+          <span class="today-btn" onclick="showAddExamModal()">+ 添加</span>
+        </div>
+        <div id="exam-list" class="exam-list"></div>
+      </div>
+      
+      <button class="btn btn-primary" onclick="navigateTo('page-course')">下一步</button>
+    </div>
+    
+    <!-- Course Config Page -->
+    <div id="page-course" class="page">
+      <div class="glass-card overview-card">
+        <div class="overview-content">
+          <div class="overview-item">
+            <div class="overview-value" id="course-current-date">--</div>
+            <div class="overview-label">当前日期</div>
+          </div>
+          <div class="overview-item">
+            <div class="overview-value" id="course-days">0</div>
+            <div class="overview-label">复习天数</div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="glass-card">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+          <h3 class="section-title" style="margin-bottom: 0;">⚙️ 科目配置</h3>
+          <span class="today-btn" onclick="showAddCourseModal()">+ 配置</span>
+        </div>
+        <p style="font-size: 13px; color: var(--text-secondary); margin-bottom: 16px;">
+          设置每门课的学分、难度和学习类型，系统会自动计算复习权重
+        </p>
+        <div id="course-list" class="course-list"></div>
+      </div>
+      
+      <div class="glass-card" style="background: rgba(152, 212, 196, 0.15); border: 1px solid rgba(152, 212, 196, 0.3);">
+        <h4 style="font-size: 15px; font-weight: 600; color: #2d8a6e; margin-bottom: 10px;">📊 权重计算说明</h4>
+        <p style="font-size: 13px; color: #3a9a7e; line-height: 1.8;">
+          • 学分越高 → 分配时间越多<br>
+          • 难度：简单(1.0) 中等(1.2) 困难(1.5)<br>
+          • 类型：背诵(1.3) 刷题(1.0)<br>
+          • 临近考试 → 优先级更高
+        </p>
+      </div>
+      
+      <div class="btn-group">
+        <button class="btn btn-secondary" onclick="navigateTo('page-exam')">返回</button>
+        <button class="btn btn-primary" onclick="generateSchedule()">生成计划</button>
+      </div>
+    </div>
+    
+    <!-- Schedule Page -->
+    <div id="page-schedule" class="page">
+      <div id="schedule-empty" class="glass-card">
+        <div class="empty-state">
+          <div class="empty-icon">📋</div>
+          <div class="empty-title">暂无复习计划</div>
+          <div class="empty-desc">请先导入考试时间并配置科目信息</div>
+          <button class="btn btn-primary" style="margin-top: 20px; width: auto; display: inline-block;" onclick="navigateTo('page-exam')">开始配置</button>
+        </div>
+      </div>
+      
+      <div id="schedule-content" style="display: none;">
+        <div class="glass-card">
+          <div class="date-nav">
+            <div class="nav-btn" onclick="prevDay()">‹</div>
+            <div class="date-info">
+              <div class="current-date" id="schedule-date"></div>
+              <div class="current-weekday" id="schedule-weekday"></div>
+            </div>
+            <div class="nav-btn" onclick="nextDay()">›</div>
+          </div>
+        </div>
+        
+        <div class="progress-section">
+          <div class="progress-header">
+            <span class="progress-label">复习进度</span>
+            <span class="progress-percent" id="progress-percent">0%</span>
+          </div>
+          <div class="progress-bar">
+            <div class="progress-fill" id="progress-fill"></div>
+          </div>
+          <div class="progress-info" id="progress-info">已复习 0 / 0 项</div>
+        </div>
+        
+        <div class="glass-card">
+          <div class="preview-header">
+            <h3 class="section-title" style="margin-bottom: 0;">⏰ 一日计划</h3>
+            <span class="export-btn" onclick="exportSchedule()">📄 导出计划</span>
+          </div>
+          <div id="timeline" class="timeline"></div>
+        </div>
+        
+        <div class="glass-card">
+          <h3 class="section-title">📊 今日统计</h3>
+          <div class="summary-grid">
+            <div class="summary-item">
+              <div class="summary-value" id="stat-hours">0</div>
+              <div class="summary-label">学习时长</div>
+              <div class="stat-label">小时</div>
+            </div>
+            <div class="summary-item">
+              <div class="summary-value" id="stat-tasks">0</div>
+              <div class="summary-label">任务数量</div>
+              <div class="stat-label">项</div>
+            </div>
+            <div class="summary-item">
+              <div class="summary-value" id="stat-completed">0</div>
+              <div class="summary-label">已完成</div>
+              <div class="stat-label">项</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Advice Page -->
+    <div id="page-advice" class="page">
+      <div class="tabs">
+        <div class="tab-item active" onclick="showAdvice('sleep', this)">
+          <span class="tab-icon">💤</span>
+          <span class="tab-text">作息</span>
+        </div>
+        <div class="tab-item" onclick="showAdvice('diet', this)">
+          <span class="tab-icon">🥗</span>
+          <span class="tab-text">饮食</span>
+        </div>
+        <div class="tab-item" onclick="showAdvice('exercise', this)">
+          <span class="tab-icon">🏋️</span>
+          <span class="tab-text">锻炼</span>
+        </div>
+        <div class="tab-item" onclick="showAdvice('mindset', this)">
+          <span class="tab-icon">🧠</span>
+          <span class="tab-text">心态</span>
+        </div>
+      </div>
+      
+      <div id="advice-content"></div>
+      
+      <div class="motivation-card">
+        <p class="motivation-quote" id="motivation-quote">✨ 成功的秘诀在于始终如一地坚持目标 ✨</p>
+        <p class="motivation-author" id="motivation-author">— 迪斯雷利</p>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Bottom Navigation -->
+  <div class="bottom-nav">
+    <div class="nav-item active" onclick="navigateTo('page-home', this)">
+      <span class="nav-icon">🏠</span>
+      <span class="nav-text">首页</span>
+    </div>
+    <div class="nav-item" onclick="navigateTo('page-schedule', this)">
+      <span class="nav-icon">📋</span>
+      <span class="nav-text">计划</span>
+    </div>
+    <div class="nav-item" onclick="navigateTo('page-advice', this)">
+      <span class="nav-icon">💡</span>
+      <span class="nav-text">建议</span>
+    </div>
+  </div>
+  
+  <!-- Add Exam Modal -->
+  <div id="modal-add-exam" class="modal-overlay" style="display: none;" onclick="closeModal('modal-add-exam')">
+    <div class="modal-content" onclick="event.stopPropagation()">
+      <div class="modal-title">添加考试科目 📝</div>
+      <div class="form-group">
+        <label class="form-label">科目名称</label>
+        <input type="text" id="exam-name" class="form-input" placeholder="例如：高等数学">
+      </div>
+      <div class="form-group">
+        <label class="form-label">考试日期</label>
+        <input type="date" id="exam-date" class="form-input">
+      </div>
+      <div class="form-group">
+        <label class="form-label">考试时间</label>
+        <input type="time" id="exam-time" class="form-input" value="09:00">
+      </div>
+      <div class="modal-actions">
+        <button class="btn btn-secondary" onclick="closeModal('modal-add-exam')">取消</button>
+        <button class="btn btn-primary" onclick="addExam()">确定添加</button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Add Course Modal -->
+  <div id="modal-add-course" class="modal-overlay" style="display: none;" onclick="closeModal('modal-add-course')">
+    <div class="modal-content" onclick="event.stopPropagation()">
+      <div class="modal-title" id="course-modal-title">配置科目 ⚙️</div>
+      <div class="form-group">
+        <label class="form-label">选择科目</label>
+        <select id="course-select" class="form-input">
+          <option value="">请选择科目</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">学分</label>
+        <div class="credits-picker">
+          <button class="credits-btn" onclick="adjustCredits(-1)">−</button>
+          <span class="credits-value" id="credits-value">3</span>
+          <button class="credits-btn" onclick="adjustCredits(1)">+</button>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">难度</label>
+        <div class="options">
+          <span class="option-btn" data-value="easy" onclick="selectOption(this, 'difficulty')">简单</span>
+          <span class="option-btn active" data-value="medium" onclick="selectOption(this, 'difficulty')">中等</span>
+          <span class="option-btn" data-value="hard" onclick="selectOption(this, 'difficulty')">困难</span>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">学习类型</label>
+        <div class="options">
+          <span class="option-btn active" data-value="practice" onclick="selectOption(this, 'type')">刷题型</span>
+          <span class="option-btn" data-value="memorize" onclick="selectOption(this, 'type')">背诵型</span>
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button class="btn btn-secondary" onclick="closeModal('modal-add-course')">取消</button>
+        <button class="btn btn-primary" onclick="saveCourse()">保存</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ============ Data Storage ============
+    const STORAGE_KEY = 'final_straight_a_data';
+    let state = {
+      currentDate: '',
+      exams: [],
+      courses: [],
+      dailySchedules: [],
+      currentDateIndex: 0,
+      completedTasks: {}
+    };
+    
+    // Load from localStorage
+    function loadState() {
+      try {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if (saved) {
+          state = JSON.parse(saved);
+        }
+      } catch (e) {
+        console.error('Failed to load state:', e);
+      }
+    }
+    
+    // Save to localStorage
+    function saveState() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      } catch (e) {
+        console.error('Failed to save state:', e);
+      }
+    }
+    
+    // ============ Tips and Quotes ============
+    const tips = [
+      '合理安排复习时间，保持高效学习状态！',
+      '记得定时休息，保护眼睛和身体健康 ✨',
+      '保持良好心态，相信自己一定能行！💪',
+      '复习时可以使用番茄工作法提高效率 🍅',
+      '每天坚持运动，保持充沛精力 🏃',
+      '合理饮食，多吃蔬菜水果补充营养 🥗',
+      '遇到难题不要钻牛角尖，适当跳过回头再做 🎯'
+    ];
+    
+    const quotes = [
+      { text: '✨ 成功的秘诀在于始终如一地坚持目标 ✨', author: '— 迪斯雷利' },
+      { text: '🌸 每一个不曾起舞的日子，都是对生命的辜负 🌸', author: '— 尼采' },
+      { text: '⭐ 不要等待机会，而要创造机会 ⭐', author: '— 林肯' },
+      { text: '📚 学习不是为了应付考试，而是为了遇见更好的自己 📚', author: '— 佚名' },
+      { text: '🌟 今天的努力是明天的底气 🌟', author: '— 佚名' },
+      { text: '💫 星光不问赶路人，时光不负有心人 💫', author: '— 佚名' }
+    ];
+    
+    const adviceData = {
+      sleep: [
+        { title: '规律作息', desc: '保持每天7-8小时睡眠，固定作息时间，避免熬夜 🌙' },
+        { title: '睡前放松', desc: '睡前1小时远离电子屏幕，可以阅读纸质书或听轻音乐 🎧' },
+        { title: '环境舒适', desc: '保持卧室安静、黑暗、凉爽，温度控制在18-22℃' },
+        { title: '午睡技巧', desc: '午睡时间控制在20-30分钟，下午3点前完成 ☀️' },
+        { title: '避免干扰', desc: '睡前3小时避免剧烈运动和刺激性饮品' }
+      ],
+      diet: [
+        { title: '均衡营养', desc: '保证蛋白质、碳水、维生素摄入，多吃蔬菜水果 🥗' },
+        { title: '定时进餐', desc: '三餐规律，早餐一定要吃，晚餐不宜过饱 🍳' },
+        { title: '补充水分', desc: '每天喝足够的水，约1.5-2升，避免脱水影响思维 💧' },
+        { title: '健脑食物', desc: '多吃坚果、深海鱼、蓝莓等有助于记忆力的食物 🧠' },
+        { title: '避免刺激', desc: '减少高糖、高油、高盐食物，避免咖啡因过量 ☕' }
+      ],
+      exercise: [
+        { title: '每日运动', desc: '每天至少30分钟有氧运动，如快走、慢跑、跳绳 🏃' },
+        { title: '学习间隙', desc: '每学习1小时起身活动5分钟，做简单拉伸 🧘' },
+        { title: '呼吸练习', desc: '感到焦虑时，进行深呼吸练习，放松身心 🌬️' },
+        { title: '户外运动', desc: '每天至少到户外晒15分钟太阳，改善心情 ☀️' },
+        { title: '适度原则', desc: '避免高强度运动，保持适度运动量即可 ⚖️' }
+      ],
+      mindset: [
+        { title: '目标分解', desc: '将大目标分解为小任务，逐个完成，避免压力过大 🎯' },
+        { title: '积极心态', desc: '保持乐观，相信自己的能力，多给自己正面暗示 ✨' },
+        { title: '适当休息', desc: '学习之余给自己一些娱乐时间，劳逸结合 🎮' },
+        { title: '拒绝拖延', desc: '今日事今日毕，不要把任务堆积到最后 ⏰' },
+        { title: '寻求支持', desc: '遇到困难时，及时向同学、老师或家人求助 🤝' },
+        { title: '自我奖励', desc: '完成阶段性目标后，给自己一些小奖励 🎁' },
+        { title: '接受不完美', desc: '不必追求完美，尽力而为就是最好的结果 💝' }
+      ]
+    };
+    
+    // ============ Initialization ============
+    function init() {
+      loadState();
+      updateDateDisplay();
+      updateStats();
+      updateTodayTip();
+      updateMotivation();
+      renderExamList();
+      renderCourseList();
+      updatePreview();
+      
+      setupDatePicker();
+      setupFileUpload();
+    }
+    
+    function openDatePicker() {
+      const dateInput = document.getElementById('current-date');
+      dateInput.click();
+    }
+    
+    function setupDatePicker() {
+      const dateInput = document.getElementById('current-date');
+      const today = new Date().toISOString().split('T')[0];
+      dateInput.min = '2020-01-01';
+      dateInput.max = '2030-12-31';
+      
+      dateInput.addEventListener('change', function(e) {
+        state.currentDate = e.target.value;
+        saveState();
+        updateDateDisplay();
+        updateStats();
+      });
+      
+      if (state.currentDate) {
+        dateInput.value = state.currentDate;
+      }
+    }
+    
+    function setToday() {
+      const today = new Date();
+      const todayStr = today.toISOString().split('T')[0];
+      state.currentDate = todayStr;
+      document.getElementById('current-date').value = todayStr;
+      saveState();
+      updateDateDisplay();
+      updateStats();
+    }
+    
+    function updateDateDisplay() {
+      const display = document.getElementById('current-date-display');
+      if (state.currentDate) {
+        const date = new Date(state.currentDate);
+        const options = { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' };
+        display.textContent = date.toLocaleDateString('zh-CN', options);
+      } else {
+        display.textContent = '请选择日期';
+      }
+    }
+    
+    // ============ Navigation ============
+    function navigateTo(pageId, element) {
+      document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
+      document.getElementById(pageId).classList.add('active');
+      
+      document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+      if (element) {
+        element.classList.add('active');
+      } else {
+        const navItems = document.querySelectorAll('.nav-item');
+        if (pageId === 'page-home') navItems[0].classList.add('active');
+        else if (pageId === 'page-schedule') navItems[1].classList.add('active');
+        else if (pageId === 'page-advice') navItems[2].classList.add('active');
+      }
+      
+      if (pageId === 'page-schedule') {
+        renderSchedule();
+      }
+    }
+    
+    // ============ Stats ============
+    function updateStats() {
+      const studyDays = calculateStudyDays();
+      document.getElementById('stat-days').textContent = studyDays;
+      document.getElementById('stat-courses').textContent = state.exams.length;
+      document.getElementById('stat-credits').textContent = state.courses.reduce((sum, c) => sum + c.credits, 0);
+      document.getElementById('course-current-date').textContent = state.currentDate ? formatDateShort(state.currentDate) : '--';
+      document.getElementById('course-days').textContent = studyDays;
+    }
+    
+    function calculateStudyDays() {
+      if (!state.currentDate || state.exams.length === 0) return 0;
+      const start = new Date(state.currentDate);
+      const latestExam = state.exams.reduce((latest, exam) => exam.date > latest.date ? exam : latest, { date: '' });
+      if (!latestExam.date) return 0;
+      const end = new Date(latestExam.date);
+      const diff = end.getTime() - start.getTime();
+      return Math.max(1, Math.ceil(diff / (1000 * 60 * 60 * 24)));
+    }
+    
+    function formatDateShort(dateStr) {
+      if (!dateStr) return '--';
+      const date = new Date(dateStr);
+      return `${date.getMonth() + 1}月${date.getDate()}日`;
+    }
+    
+    function formatDate(dateStr) {
+      if (!dateStr) return '请选择日期';
+      const date = new Date(dateStr);
+      return `${date.getFullYear()}年${date.getMonth() + 1}月${date.getDate()}日`;
+    }
+    
+    // ============ Tips and Motivation ============
+    function updateTodayTip() {
+      const index = new Date().getDate() % tips.length;
+      document.getElementById('today-tip').textContent = tips[index];
+    }
+    
+    function updateMotivation() {
+      const index = new Date().getDate() % quotes.length;
+      document.getElementById('motivation-quote').textContent = quotes[index].text;
+      document.getElementById('motivation-author').textContent = quotes[index].author;
+    }
+    
+    // ============ Exam Management ============
+    function showAddExamModal() {
+      document.getElementById('exam-name').value = '';
+      document.getElementById('exam-date').value = '';
+      document.getElementById('exam-time').value = '09:00';
+      document.getElementById('modal-add-exam').style.display = 'flex';
+    }
+    
+    function closeModal(modalId) {
+      document.getElementById(modalId).style.display = 'none';
+      state.editingCourseId = null;
+    }
+    
+    function addExam() {
+      const name = document.getElementById('exam-name').value.trim();
+      const date = document.getElementById('exam-date').value;
+      const time = document.getElementById('exam-time').value;
+      
+      if (!name) { alert('请输入科目名称'); return; }
+      if (!date) { alert('请选择考试日期'); return; }
+      if (!time) { alert('请选择考试时间'); return; }
+      
+      state.exams.push({ id: Date.now().toString(), name, date, time });
+      saveState();
+      closeModal('modal-add-exam');
+      renderExamList();
+      updateStats();
+    }
+    
+    function deleteExam(id) {
+      if (!confirm('确定要删除这个考试科目吗？')) return;
+      state.exams = state.exams.filter(e => e.id !== id);
+      state.courses = state.courses.filter(c => c.examId !== id);
+      saveState();
+      renderExamList();
+      renderCourseList();
+      updateStats();
+    }
+    
+    function renderExamList() {
+      const list = document.getElementById('exam-list');
+      if (state.exams.length === 0) {
+        list.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-icon">📚</div>
+            <div class="empty-title">暂无考试科目</div>
+            <div class="empty-desc">添加或导入考试信息</div>
+          </div>
+        `;
+        return;
+      }
+      
+      list.innerHTML = state.exams.map(exam => `
+        <div class="exam-item">
+          <div class="exam-info">
+            <div class="exam-name">${exam.name}</div>
+            <div class="exam-detail">${formatDate(exam.date)} ${exam.time}</div>
+          </div>
+          <button class="exam-delete" onclick="deleteExam('${exam.id}')">删除</button>
+        </div>
+      `).join('');
+    }
+    
+    // ============ Course Management ============
+    let courseFormData = { credits: 3, difficulty: 'medium', type: 'practice' };
+    
+    function showAddCourseModal() {
+      state.editingCourseId = null;
+      document.getElementById('course-modal-title').textContent = '配置科目 ⚙️';
+      document.getElementById('credits-value').textContent = '3';
+      courseFormData = { credits: 3, difficulty: 'medium', type: 'practice' };
+      
+      const select = document.getElementById('course-select');
+      const unconfiguredExams = state.exams.filter(e => !state.courses.some(c => c.examId === e.id));
+      
+      if (unconfiguredExams.length === 0) {
+        select.innerHTML = '<option value="">所有科目已配置</option>';
+      } else {
+        select.innerHTML = '<option value="">请选择科目</option>' + 
+          unconfiguredExams.map(e => `<option value="${e.id}">${e.name}</option>`).join('');
+      }
+      
+      document.querySelectorAll('.option-btn').forEach(btn => btn.classList.remove('active'));
+      document.querySelector('.option-btn[data-value="medium"]').classList.add('active');
+      document.querySelector('.option-btn[data-value="practice"]').classList.add('active');
+      
+      document.getElementById('modal-add-course').style.display = 'flex';
+    }
+    
+    function adjustCredits(delta) {
+      const newValue = courseFormData.credits + delta;
+      if (newValue >= 1 && newValue <= 10) {
+        courseFormData.credits = newValue;
+        document.getElementById('credits-value').textContent = newValue;
+      }
+    }
+    
+    function selectOption(btn, field) {
+      btn.parentElement.querySelectorAll('.option-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      courseFormData[field] = btn.dataset.value;
+    }
+    
+    function saveCourse() {
+      const examId = document.getElementById('course-select').value;
+      if (!examId) {
+        alert('请选择科目');
+        return;
+      }
+      
+      const exam = state.exams.find(e => e.id === examId);
+      state.courses.push({
+        id: Date.now().toString(),
+        examId: exam.id,
+        name: exam.name,
+        credits: courseFormData.credits,
+        difficulty: courseFormData.difficulty,
+        type: courseFormData.type,
+        examDate: exam.date
+      });
+      
+      saveState();
+      closeModal('modal-add-course');
+      renderCourseList();
+      updateStats();
+    }
+    
+    function deleteCourse(id) {
+      if (!confirm('确定要删除这个科目配置吗？')) return;
+      state.courses = state.courses.filter(c => c.id !== id);
+      saveState();
+      renderCourseList();
+      updateStats();
+    }
+    
+    function renderCourseList() {
+      const list = document.getElementById('course-list');
+      if (state.courses.length === 0) {
+        list.innerHTML = `
+          <div class="empty-state" style="padding: 32px 20px;">
+            <div class="empty-icon" style="font-size: 48px;">📝</div>
+            <div class="empty-title">暂无配置的科目</div>
+            <div class="empty-desc">点击上方按钮开始配置</div>
+          </div>
+        `;
+        return;
+      }
+      
+      list.innerHTML = state.courses.map(course => `
+        <div class="course-item">
+          <div class="course-header">
+            <div class="course-name">${course.name}</div>
+            <div class="course-tags">
+              <span class="tag tag-${course.difficulty}">${course.difficulty === 'easy' ? '简单' : course.difficulty === 'medium' ? '中等' : '困难'}</span>
+              <span class="tag tag-${course.type}">${course.type === 'memorize' ? '背诵型' : '刷题型'}</span>
+            </div>
+          </div>
+          <div class="course-meta">
+            <span>📚 学分: ${course.credits}</span>
+            <span>📅 考试: ${formatDateShort(course.examDate)}</span>
+          </div>
+          <div class="course-actions">
+            <span class="course-action" onclick="deleteCourse('${course.id}')">删除</span>
+          </div>
+        </div>
+      `).join('');
+    }
+    
+    // ============ Schedule Generation ============
+    function generateSchedule() {
+      if (!state.currentDate) { alert('请先设置当前日期'); navigateTo('page-exam'); return; }
+      if (state.exams.length === 0) { alert('请先导入考试时间'); navigateTo('page-exam'); return; }
+      if (state.courses.length === 0) { alert('请先配置科目信息'); navigateTo('page-course'); return; }
+      
+      state.dailySchedules = [];
+      const startDate = new Date(state.currentDate);
+      const studyDays = calculateStudyDays();
+      
+      for (let day = 0; day < studyDays; day++) {
+        const date = new Date(startDate);
+        date.setDate(date.getDate() + day);
+        const dateStr = date.toISOString().split('T')[0];
+        const dayTasks = generateDayTasks(dateStr, day, studyDays);
+        state.dailySchedules.push({ date: dateStr, tasks: dayTasks });
+      }
+      
+      state.currentDateIndex = 0;
+      saveState();
+      navigateTo('page-schedule');
+    }
+    
+    function generateDayTasks(dateStr, dayIndex, totalDays) {
+      const tasks = [];
+      const todayCourses = state.courses.filter(course => {
+        const examDate = new Date(course.examDate);
+        const today = new Date(dateStr);
+        const daysUntilExam = Math.ceil((examDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+        return daysUntilExam >= 0 && daysUntilExam <= totalDays - dayIndex;
+      });
+      
+      if (todayCourses.length === 0) return tasks;
+      
+      const timeSlots = [
+        { start: '08:00', end: '10:00', duration: 120 },
+        { start: '10:30', end: '12:30', duration: 120 },
+        { start: '14:00', end: '16:00', duration: 120 },
+        { start: '16:30', end: '18:30', duration: 120 },
+        { start: '19:30', end: '21:30', duration: 120 },
+      ];
+      
+      const coursePriority = todayCourses.map(course => {
+        const examDate = new Date(course.examDate);
+        const today = new Date(dateStr);
+        const daysUntilExam = Math.ceil((examDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+        
+        const difficultyWeight = course.difficulty === 'hard' ? 1.5 : course.difficulty === 'medium' ? 1.2 : 1.0;
+        const typeWeight = course.type === 'memorize' ? 1.3 : 1.0;
+        const timeWeight = daysUntilExam > 0 ? 1 / daysUntilExam : 2.0;
+        
+        return { course, priority: course.credits * difficultyWeight * typeWeight * timeWeight };
+      }).sort((a, b) => b.priority - a.priority);
+      
+      const totalPriority = coursePriority.reduce((sum, cp) => sum + cp.priority, 0);
+      let slotIndex = 0;
+      
+      coursePriority.forEach(cp => {
+        const allocationRatio = cp.priority / totalPriority;
+        const allocatedSlots = Math.max(1, Math.ceil(allocationRatio * timeSlots.length));
+        
+        for (let i = 0; i < allocatedSlots && slotIndex < timeSlots.length; i++) {
+          const slot = timeSlots[slotIndex];
+          const taskContent = generateTaskContent(cp.course, dayIndex, totalDays);
+          
+          tasks.push({
+            id: `${dateStr}-${slot.start}-${cp.course.id}`,
+            courseId: cp.course.id,
+            courseName: cp.course.name,
+            startTime: slot.start,
+            endTime: slot.end,
+            content: taskContent,
+            duration: slot.duration,
+            completed: false
+          });
+          slotIndex++;
+        }
+      });
+      
+      return tasks;
+    }
+    
+    function generateTaskContent(course, dayIndex, totalDays) {
+      const progress = Math.round(((dayIndex + 1) / totalDays) * 100);
+      
+      if (course.type === 'memorize') {
+        if (progress < 30) return `📚 精读教材，整理重点笔记`;
+        else if (progress < 60) return `📖 背诵核心知识点，完成思维导图`;
+        else if (progress < 80) return `🧠 默写概念，模拟自测`;
+        else return `✨ 查漏补缺，回顾易混点`;
+      } else {
+        if (progress < 30) return `📝 完成课后基础习题`;
+        else if (progress < 60) return `💻 刷题练习，整理错题本`;
+        else if (progress < 80) return `🎯 真题模拟，限时训练`;
+        else return `🔍 错题复盘，总结技巧`;
+      }
+    }
+    
+    // ============ Schedule Display ============
+    function renderSchedule() {
+      if (state.dailySchedules.length === 0) {
+        document.getElementById('schedule-empty').style.display = 'block';
+        document.getElementById('schedule-content').style.display = 'none';
+        return;
+      }
+      
+      document.getElementById('schedule-empty').style.display = 'none';
+      document.getElementById('schedule-content').style.display = 'block';
+      updateScheduleDisplay();
+    }
+    
+    function updateScheduleDisplay() {
+      const schedule = state.dailySchedules[state.currentDateIndex];
+      if (!schedule) return;
+      
+      const date = new Date(schedule.date);
+      const weekdays = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
+      
+      document.getElementById('schedule-date').textContent = `${date.getMonth() + 1}月${date.getDate()}日`;
+      document.getElementById('schedule-weekday').textContent = weekdays[date.getDay()];
+      
+      const totalTasks = schedule.tasks.length;
+      const completedCount = schedule.tasks.filter(t => state.completedTasks[t.id]).length;
+      const percent = totalTasks > 0 ? Math.round((completedCount / totalTasks) * 100) : 0;
+      
+      document.getElementById('progress-percent').textContent = percent + '%';
+      document.getElementById('progress-fill').style.width = percent + '%';
+      document.getElementById('progress-info').textContent = `已复习 ${completedCount} / ${totalTasks} 项`;
+      
+      document.getElementById('stat-tasks').textContent = totalTasks;
+      document.getElementById('stat-completed').textContent = completedCount;
+      const totalMinutes = schedule.tasks.reduce((sum, t) => sum + t.duration, 0);
+      document.getElementById('stat-hours').textContent = (totalMinutes / 60).toFixed(1);
+      
+      renderTimeline(schedule.tasks);
+    }
+    
+    function renderTimeline(tasks) {
+      const timeline = document.getElementById('timeline');
+      
+      if (tasks.length === 0) {
+        timeline.innerHTML = `
+          <div style="text-align: center; padding: 40px;">
+            <div style="font-size: 48px; margin-bottom: 12px;">🎉</div>
+            <div style="font-size: 16px; color: var(--text-secondary);">今日无任务，好好休息！</div>
+          </div>
+        `;
+        return;
+      }
+      
+      timeline.innerHTML = tasks.map((task, index) => `
+        <div class="timeline-item">
+          <div class="timeline-line">
+            <div class="timeline-dot"></div>
+            ${index < tasks.length - 1 ? '<div class="timeline-connector"></div>' : ''}
+          </div>
+          <div class="timeline-content">
+            <div class="task-time">
+              <span class="task-time-start">${task.startTime}</span>
+              <span class="task-time-sep">-</span>
+              <span class="task-time-end">${task.endTime}</span>
+            </div>
+            <div class="task-card">
+              <div class="task-header">
+                <span class="task-course">${task.courseName}</span>
+                <span class="task-tag">${task.duration}分钟</span>
+              </div>
+              <div class="task-content">${task.content}</div>
+              <div class="task-footer">
+                <div class="check-circle ${state.completedTasks[task.id] ? 'checked' : ''}" onclick="toggleTask('${task.id}')">
+                  ${state.completedTasks[task.id] ? '<span class="check-icon">✓</span>' : ''}
+                </div>
+                <span class="task-status ${state.completedTasks[task.id] ? 'completed' : ''}">
+                  ${state.completedTasks[task.id] ? '✓ 已完成' : '○ 未完成'}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+    
+    function toggleTask(taskId) {
+      state.completedTasks[taskId] = !state.completedTasks[taskId];
+      saveState();
+      updateScheduleDisplay();
+      updatePreview();
+    }
+    
+    function prevDay() {
+      if (state.currentDateIndex > 0) {
+        state.currentDateIndex--;
+        saveState();
+        updateScheduleDisplay();
+      }
+    }
+    
+    function nextDay() {
+      if (state.currentDateIndex < state.dailySchedules.length - 1) {
+        state.currentDateIndex++;
+        saveState();
+        updateScheduleDisplay();
+      }
+    }
+    
+    // ============ Export ============
+    function exportSchedule() {
+      let html = `<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>期末复习计划 ✨</title>
+  <style>
+    body { font-family: 'Microsoft YaHei', Arial, sans-serif; padding: 40px; max-width: 800px; margin: 0 auto; background: #faf8fc; }
+    h1 { text-align: center; color: #E8B4CB; margin-bottom: 30px; font-size: 28px; }
+    .day { margin-bottom: 30px; background: white; padding: 24px; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); }
+    .day-title { font-size: 18px; font-weight: bold; color: #4A4A5A; margin-bottom: 15px; border-bottom: 2px solid #E8B4CB; padding-bottom: 10px; }
+    .task { display: flex; padding: 14px; background: #faf8fc; border-radius: 10px; margin-bottom: 10px; border-left: 4px solid #E8B4CB; }
+    .task-time { min-width: 100px; font-weight: bold; color: #E8B4CB; font-size: 14px; }
+    .task-content { flex: 1; }
+    .task-course { font-weight: bold; margin-bottom: 4px; font-size: 15px; color: #333; }
+    .task-desc { color: #666; font-size: 14px; }
+    .footer { text-align: center; margin-top: 40px; color: #999; font-size: 13px; }
+    @media print { body { padding: 20px; } }
+  </style>
+</head>
+<body>
+  <h1>📚 期末复习计划 ✨</h1>
+`;
+      
+      state.dailySchedules.forEach(schedule => {
+        const date = new Date(schedule.date);
+        const weekdays = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
+        
+        html += `
+  <div class="day">
+    <div class="day-title">${date.getMonth() + 1}月${date.getDate()}日 ${weekdays[date.getDay()]}</div>
+`;
+        
+        schedule.tasks.forEach(task => {
+          html += `
+    <div class="task">
+      <div class="task-time">${task.startTime} - ${task.endTime}</div>
+      <div class="task-content">
+        <div class="task-course">${task.courseName}</div>
+        <div class="task-desc">${task.content}</div>
+      </div>
+    </div>
+`;
+        });
+        
+        html += `
+  </div>
+`;
+      });
+      
+      html += `
+  <div class="footer">
+    <p>💪 加油！坚持就是胜利！</p>
+    <p>✨ 生成时间：${new Date().toLocaleString('zh-CN')} ✨</p>
+  </div>
+</body>
+</html>`;
+      
+      const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = '期末复习计划.html';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+    
+    // ============ Advice ============
+    function showAdvice(type, element) {
+      document.querySelectorAll('.tab-item').forEach(tab => tab.classList.remove('active'));
+      element.classList.add('active');
+      
+      const content = document.getElementById('advice-content');
+      const icons = { sleep: '💤', diet: '🥗', exercise: '🏋️', mindset: '🧠' };
+      
+      content.innerHTML = adviceData[type].map(advice => `
+        <div class="advice-card">
+          <div class="advice-icon ${type}">${icons[type]}</div>
+          <div>
+            <div class="advice-title">${advice.title}</div>
+            <div class="advice-desc">${advice.desc}</div>
+          </div>
+        </div>
+      `).join('');
+    }
+    
+    // ============ Preview ============
+    function updatePreview() {
+      if (state.dailySchedules.length === 0) {
+        document.getElementById('preview-card').style.display = 'none';
+        return;
+      }
+      
+      const today = new Date().toISOString().split('T')[0];
+      const todaySchedule = state.dailySchedules.find(s => s.date === today);
+      
+      if (!todaySchedule || todaySchedule.tasks.length === 0) {
+        document.getElementById('preview-card').style.display = 'none';
+        return;
+      }
+      
+      document.getElementById('preview-card').style.display = 'block';
+      document.getElementById('preview-date').textContent = formatDate(today);
+      
+      const tasks = todaySchedule.tasks.slice(0, 3);
+      document.getElementById('preview-tasks').innerHTML = tasks.map(task => `
+        <div class="preview-task">
+          <div class="preview-time">${task.startTime}</div>
+          <div class="preview-info">
+            <div class="preview-course">${task.courseName}</div>
+            <div class="preview-content">${task.content}</div>
+          </div>
+        </div>
+      `).join('');
+      
+      if (todaySchedule.tasks.length > 3) {
+        document.getElementById('preview-tasks').innerHTML += `
+          <div class="preview-more">还有 ${todaySchedule.tasks.length - 3} 项任务...</div>
+        `;
+      }
+    }
+    
+    // ============ File Upload ============
+    function setupFileUpload() {
+      const uploadZone = document.getElementById('upload-zone');
+      const fileInput = document.getElementById('file-input');
+      
+      uploadZone.addEventListener('click', () => fileInput.click());
+      
+      uploadZone.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        uploadZone.classList.add('dragover');
+      });
+      
+      uploadZone.addEventListener('dragleave', () => {
+        uploadZone.classList.remove('dragover');
+      });
+      
+      uploadZone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        uploadZone.classList.remove('dragover');
+        const files = e.dataTransfer.files;
+        if (files.length > 0) {
+          handleFile(files[0]);
+        }
+      });
+      
+      fileInput.addEventListener('change', (e) => {
+        if (e.target.files.length > 0) {
+          handleFile(e.target.files[0]);
+        }
+      });
+    }
+    
+    function handleFile(file) {
+      const ext = file.name.split('.').pop().toLowerCase();
+      
+      if (!['xlsx', 'xls', 'csv'].includes(ext)) {
+        alert('暂不支持此文件格式，请上传 Excel 文件（.xlsx .xls .csv）');
+        return;
+      }
+      
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          const data = new Uint8Array(e.target.result);
+          const workbook = XLSX.read(data, { type: 'array' });
+          const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+          const jsonData = XLSX.utils.sheet_to_json(firstSheet, { header: 1 });
+          
+          parseExcelData(jsonData);
+        } catch (err) {
+          console.error('Parse error:', err);
+          alert('文件解析失败，请检查文件格式是否正确');
+        }
+      };
+      reader.readAsArrayBuffer(file);
+    }
+    
+    function parseExcelData(data) {
+      let importedCount = 0;
+      let autoConfigCount = 0;
+      
+      for (let i = 0; i < data.length; i++) {
+        const row = data[i];
+        if (!row || row.length === 0) continue;
+        
+        let name = '', date = '', time = '';
+        let credits = 3, difficulty = 'medium', type = 'practice';
+        
+        if (row[0]) name = String(row[0]).trim();
+        
+        if (!name || name.length < 2 || name.length > 50) continue;
+        
+        if (name.includes('科目') || name.includes('名称') || name.includes('考试') || name.includes('课程')) continue;
+        
+        // 从科目名称中提取学分
+        const creditsMatch = name.match(/(\d+)\s*学分/);
+        if (creditsMatch) {
+          credits = parseInt(creditsMatch[1]);
+        }
+        
+        // 从其他列提取学分（如果有学分列）
+        for (let j = 2; j < row.length; j++) {
+          if (row[j]) {
+            const cell = String(row[j]).trim();
+            if (cell.match(/^\d+$/) && parseInt(cell) >= 1 && parseInt(cell) <= 10) {
+              credits = parseInt(cell);
+              break;
+            }
+            const creditsInCell = cell.match(/(\d+)\s*学分/);
+            if (creditsInCell) {
+              credits = parseInt(creditsInCell[1]);
+              break;
+            }
+          }
+        }
+        
+        // 从科目名称和所有列中识别难度和学习类型
+        const allText = row.map(cell => cell ? String(cell) : '').join(' ');
+        difficulty = detectDifficulty(name + ' ' + allText);
+        type = detectStudyType(name + ' ' + allText);
+        
+        if (row[1]) {
+          const cell = String(row[1]).trim();
+          if (typeof row[1] === 'number') {
+            const excelDate = new Date((row[1] - 25569) * 86400 * 1000);
+            date = excelDate.toISOString().split('T')[0];
+            time = '09:00';
+          } else {
+            const result = parseDateTimeFromCell(cell);
+            date = result.date;
+            time = result.time;
+          }
+        }
+        
+        if (row[2] && !time) {
+          const timeStr = String(row[2]).trim();
+          const parsedTime = parseTimeString(timeStr);
+          if (parsedTime) time = parsedTime;
+        }
+        
+        if (!time) time = '09:00';
+        
+        if (name && date) {
+          const exists = state.exams.some(e => e.name === name && e.date === date);
+          if (!exists) {
+            const examId = Date.now().toString() + '_' + i;
+            state.exams.push({
+              id: examId,
+              name: name,
+              date: date,
+              time: time
+            });
+            importedCount++;
+            
+            // 自动创建课程配置
+            const courseExists = state.courses.some(c => c.examId === examId);
+            if (!courseExists) {
+              state.courses.push({
+                id: Date.now().toString() + '_course_' + i,
+                examId: examId,
+                name: name,
+                credits: credits,
+                difficulty: difficulty,
+                type: type,
+                examDate: date
+              });
+              autoConfigCount++;
+            }
+          }
+        }
+      }
+      
+      saveState();
+      renderExamList();
+      renderCourseList();
+      updateStats();
+      
+      if (importedCount > 0) {
+        let message = `✨ 成功导入 ${importedCount} 个考试科目！`;
+        if (autoConfigCount > 0) {
+          message += `\n📝 已自动配置 ${autoConfigCount} 个科目的权重信息`;
+        }
+        alert(message);
+      } else {
+        alert('未能识别到有效的考试信息，请检查文件格式。表格需要包含科目名称和考试日期（可在同一单元格或不同单元格）');
+      }
+    }
+    
+    function detectDifficulty(text) {
+      const lowerText = text.toLowerCase();
+      
+      // 困难关键词
+      if (lowerText.includes('超级难') || lowerText.includes('非常难') || 
+          lowerText.includes('极难') || lowerText.includes('最难') ||
+          lowerText.includes('地狱') || lowerText.includes('噩梦')) {
+        return 'hard';
+      }
+      
+      if (lowerText.includes('难') || lowerText.includes('困难') || 
+          lowerText.includes('高难度') || lowerText.includes('挑战') ||
+          lowerText.includes('复杂') || lowerText.includes('深奥') ||
+          lowerText.includes('高级') || lowerText.includes('进阶')) {
+        return 'hard';
+      }
+      
+      // 简单关键词
+      if (lowerText.includes('简单') || lowerText.includes('容易') || 
+          lowerText.includes('轻松') || lowerText.includes('基础') ||
+          lowerText.includes('入门') || lowerText.includes('初级') ||
+          lowerText.includes('容易过') || lowerText.includes('好过')) {
+        return 'easy';
+      }
+      
+      // 默认中等
+      return 'medium';
+    }
+    
+    function detectStudyType(text) {
+      const lowerText = text.toLowerCase();
+      
+      // 背诵型关键词
+      if (lowerText.includes('背诵') || lowerText.includes('记忆') || 
+          lowerText.includes('背') || lowerText.includes('默写') ||
+          lowerText.includes('概念') || lowerText.includes('理论') ||
+          lowerText.includes('原理') || lowerText.includes('思想') ||
+          lowerText.includes('历史') || lowerText.includes('文学') ||
+          lowerText.includes('政治') || lowerText.includes('马原') ||
+          lowerText.includes('毛概') || lowerText.includes('思修') ||
+          lowerText.includes('近代史') || lowerText.includes('英语') ||
+          lowerText.includes('语文') || lowerText.includes('法理') ||
+          lowerText.includes('名词解释') || lowerText.includes('简答')) {
+        return 'memorize';
+      }
+      
+      // 刷题型关键词
+      if (lowerText.includes('刷题') || lowerText.includes('计算') || 
+          lowerText.includes('解题') || lowerText.includes('练习') ||
+          lowerText.includes('数学') || lowerText.includes('高数') ||
+          lowerText.includes('线代') || lowerText.includes('概率') ||
+          lowerText.includes('物理') || lowerText.includes('力学') ||
+          lowerText.includes('化学') || lowerText.includes('编程') ||
+          lowerText.includes('代码') || lowerText.includes('算法') ||
+          lowerText.includes('数据结构') || lowerText.includes('c语言') ||
+          lowerText.includes('java') || lowerText.includes('python') ||
+          lowerText.includes('会计') || lowerText.includes('财务')) {
+        return 'practice';
+      }
+      
+      // 默认刷题型
+      return 'practice';
+    }
+    
+    function parseDateTimeFromCell(cell) {
+      let date = '';
+      let time = '';
+      
+      const dateMatch = cell.match(/(\d{1,2})月(\d{1,2})日/);
+      if (dateMatch) {
+        const month = parseInt(dateMatch[1]);
+        const day = parseInt(dateMatch[2]);
+        const year = new Date().getFullYear();
+        if (month >= 1 && month <= 12 && day >= 1 && day <= 31) {
+          const d = new Date(year, month - 1, day);
+          date = d.toISOString().split('T')[0];
+        }
+      }
+      
+      const timeRangeMatch = cell.match(/(\d{1,2}):(\d{2})[-\u2013\u2014~至](\d{1,2}):(\d{2})/);
+      if (timeRangeMatch) {
+        const startHour = parseInt(timeRangeMatch[1]);
+        const startMinute = parseInt(timeRangeMatch[2]);
+        time = `${startHour.toString().padStart(2, '0')}:${startMinute.toString().padStart(2, '0')}`;
+      } else {
+        const timeMatch = cell.match(/(\d{1,2}):(\d{2})/);
+        if (timeMatch) {
+          time = `${timeMatch[1].padStart(2, '0')}:${timeMatch[2]}`;
+        }
+      }
+      
+      if (!time && cell.includes('上午')) {
+        time = '09:00';
+      } else if (!time && cell.includes('下午')) {
+        time = '14:00';
+      } else if (!time && cell.includes('晚上')) {
+        time = '19:00';
+      }
+      
+      return { date, time };
+    }
+    
+    function parseDateString(str) {
+      // Try to parse various date formats
+      const cleaned = str.replace(/[年月日\/\-.]/g, '/');
+      const parts = cleaned.split('/');
+      
+      if (parts.length >= 3) {
+        let year, month, day;
+        
+        if (parts[0].length === 4) {
+          year = parseInt(parts[0]);
+          month = parseInt(parts[1]);
+          day = parseInt(parts[2]);
+        } else {
+          year = parseInt(parts[2]);
+          month = parseInt(parts[0]);
+          day = parseInt(parts[1]);
+        }
+        
+        if (year && month && day && year >= 2020 && year <= 2030) {
+          const date = new Date(year, month - 1, day);
+          return date.toISOString().split('T')[0];
+        }
+      }
+      
+      return '';
+    }
+    
+    function parseTimeString(str) {
+      const timeMatch = str.match(/(\d{1,2}):(\d{2})/);
+      if (timeMatch) {
+        return `${timeMatch[1].padStart(2, '0')}:${timeMatch[2]}`;
+      }
+      return '09:00';
+    }
+    
+    // Initialize on load
+    document.addEventListener('DOMContentLoaded', init);
+  </script>
+</body>
+</html>

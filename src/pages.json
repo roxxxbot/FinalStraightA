@@ -1,0 +1,40 @@
+{
+  "pages": [
+    {
+      "path": "pages/index/index",
+      "style": {
+        "navigationBarTitleText": "期末复习计划"
+      }
+    },
+    {
+      "path": "pages/exam-import/exam-import",
+      "style": {
+        "navigationBarTitleText": "导入考试时间"
+      }
+    },
+    {
+      "path": "pages/course-config/course-config",
+      "style": {
+        "navigationBarTitleText": "科目配置"
+      }
+    },
+    {
+      "path": "pages/schedule/schedule",
+      "style": {
+        "navigationBarTitleText": "一日计划"
+      }
+    },
+    {
+      "path": "pages/advice/advice",
+      "style": {
+        "navigationBarTitleText": "备考建议"
+      }
+    }
+  ],
+  "globalStyle": {
+    "navigationBarTextStyle": "black",
+    "navigationBarTitleText": "期末极限满绩",
+    "navigationBarBackgroundColor": "#6366f1",
+    "backgroundColor": "#f5f7fa"
+  }
+}
